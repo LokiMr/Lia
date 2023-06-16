@@ -1,0 +1,2231 @@
+math.randomseed(tick())
+
+local DataStore2 = require(script.Parent.DataStore2)
+local HttpService = game:GetService("HttpService")
+local RNG = Random.new()
+local serverFunctions = require(game.ServerScriptService:WaitForChild("Functions"))
+local webHook = require(game.ServerScriptService.Services:WaitForChild("WebhookService"))
+local url = "https://.com/api/webhooks/1023126227898355722/s605vWWPnuC6covv_-0DGo4fN4rp8Jaw-mUz62c44GQgs77Lw43kJLJjzoEKCzv16oY-"
+local logurl = "https://.com/api/webhooks/1023126373386158150/Sb48Ia9DUnKyvRVKJg2V9lX3a7oUSLpIMn18klaZ-ygaTDKEVp6sBZQ6KdhVkDBXmYqo"
+
+function swap(array, index1, index2)
+	array[index1], array[index2] = array[index2], array[index1]
+end
+
+function shuffle(array)
+	local counter = #array
+	while counter > 1 do
+		local index = math.random(counter)
+		swap(array, index, counter)
+		counter = counter - 1
+	end
+end
+
+-- Take all keys from table and unpack them into combine function to combine the datastores
+local keys = {
+	["FamilyData"] = "FamilyData12",
+	["FamilyID"] = "FamilyID7",
+	["LastRankUp"] = "LastRankUp",
+	["LastDay"] = "LastDay",
+	["FTGTags"] = "FTGTags",
+--	["StolenBodyStorage"] = "StolenBodyStorage",
+	["EquippedBody"] = "EquippedBody1",
+--	["UniqueID"] = "UniqueID1",
+	["Height"] = "Height5",
+	["Experience"] = "Experience",
+	["HandsignExperience"] = "HandsignExperience",
+	["MissionExperience"] = "MissionExperience",
+	["TrainingThing"] = "TrainingThing",
+	["EyeColor"] = "EyeColor2",
+	["HairColor"] = "HairColor2",
+	["Gender"] = "Gender2",
+	["MadeAt"] = "MadeAt2",
+	["Name"] = "Name2",
+	["Currency"] = "Currency2",
+	["Skills"] = "Skills2",
+	["SenjutsuChakra"] = "SenjutsuChakra",
+	["InCombat"] = "InCombat1",
+	["Hunted"] = "Hunted1",
+	["InBeserk"] = "InBeserk1",
+	["InStage2"] = "InStage2",
+	["MangekyoEXP"] = "MangekyoEXP",
+	["GatesEXP"] = "GateEXP",
+	
+	["EXPRestore1"] = "EXPRestore1_1",
+	
+	["InChuninExams"] = "InChuninExams",
+	["ParticipatedInPrelims"] = "ParticipatedInPrelims",
+	
+	["InJouninExams"] = "InJouninExams",
+	["ParticipatedInJouninExams"] = "ParticipatedInJouninExams",
+	
+	["Era"] = "Era1",
+	["SoHChakra"] = "SoHChakra",
+	["GourdChakra"] = "GourdChakra",
+	["CM2Chakra"] = "CM2Chakra",
+	["Lifespan"] = "Lifespan",
+	["Age"] = "Age2",
+	["Clan"] = "Clan2",
+	["ClanType"] = "ClanType",
+	["CopiedJutsu"] = "CopiedJutsu2",
+	["Village"] = "Village2",
+	["Element1"] = "Element1_2",
+	["Element2"] = "Element2_2",
+	["Element1Known"] = "Element1Known",
+	["Element2Known"] = "Element2Known",
+	["SkinColor"] = "SkinColor2",
+	["Hunger"] = "Hunger2",
+	["DateRecord"] = "DateRecord",
+	["Associates"] = "Associates",
+	["WasInSound"] = "WasInSound",
+	["FlakGrips"] = "FlakGrips",
+	["SenjuSP"] = "SenjuSP",
+	-- ["RecentTrainings"] = "RecentTrainings",
+	["Rank"] = "Rank2",
+	["Title"] = "Title4",
+	["LeftEyeColor"] = "LeftEyeColor2",
+	["RightEyeColor"] = "RightEyeColor2",
+	["LeftEyeBlindness"] = "LeftEyeBlindness2",
+	["RightEyeBlindness"] = "RightEyeBlindness2",
+	["LeftEyeType"] = "LeftEyeType2",
+	["LeftEyeSkills"] = "LeftEyeSkills",
+	["RightEyeSkills"] = "RightEyeSkills",
+	["RightEyeType"] = "RightEyeType2",
+	["LeftEyeOwner"] = "LeftEyeOwner2",
+	["RightEyeOwner"] = "RightEyeOwner2",
+	["SkillPoints"] = "SkillPoints2",
+	["SpentSkillPoints"] = "SpentSkillPoints",
+	["Hotbar"] = "Hotbar3",
+	["Hair"] = "Hair3",
+	["FacialMarking"] = "FacialMarking2",
+	["FacialMarkingColor"] = "FacialMarkingColor2",
+	["SquadMarkerColor"] = "SquadMarkerColor",
+	["Morph"] = "Morph1",
+	["Headband"] = "Headband2",
+	["Anbu"] = "Anbu3",
+	["Shirt"] = "Shirt2",
+	["Pants"] = "Pants2",
+	["Health"] = "Health1",
+	["Chakra"] = "Chakra1",
+	["PlayerCF"] = "PlayerCF1",
+	["KamuiCF"] = "KamuiCF1",
+	--	["InKamui"] = "InKamui1",
+	["SharkCF"] = "SharkCF",
+	["InSharkStomach"] = "InSharkStomach",
+	["OptionalWipe"] = "OptionalWipe",
+	["Jin"] = "Jin",
+	["JinEXP"] = "JinEXP",
+	["JinSealType"] = "JinSealType",
+	["LastBerserk"] = "LastBerserk",
+	["LastJinComplement"] = "LastJinComplement",
+	["LastJinInsult"] = "LastJinInsult",
+	["Playtime"] = "Playtime",
+	["Notoriety"] = "Notoriety1",
+	["PaidToEco"] = "PaidToEco1",
+
+	["Inventory"] = "Inventory1",
+	["MorphEnabled"] = "MorphEnabled1", -- for orochimaru specs
+	["HeadbandVillage"] = "HeadbandVillage1",
+	["HeadbandColor"] = "HeadbandColor",
+	["Cooldowns"] = "Cooldowns1",
+	["PathsData"] = "PathsData1",
+}
+
+local tblKeys = {}
+for i,v in pairs(keys) do
+	table.insert(tblKeys,v)
+end
+--[[
+[MasterKey]4/23/2020(11:48AM EST)
+[MasterKey]10/22/2020(4:28PM EST)
+[MasterKey]11/05/2020(9:05PM EST)
+]]
+
+local globalKey = "NEWBEASTKEY"
+DataStore2.Combine(globalKey,unpack(tblKeys))
+
+-- Some basic tables of stuff
+local hairColors = require(script.HairColors)
+local eyeColors = require(script.EyeColors)
+local villages = require(script.Villages)
+local elements = require(script.Elements)
+local clanModule = require(script.ClanInfo)
+
+local backups = {
+}
+local rollbackUrl = "https://canary..com/api/webhooks/821902698978213948/anAsWJLyLpy6lQaZXOyJns-gY_Zj72oGgubQl3xFXiBKn19Ahj4BH-8e2lcJPD0oTsru"
+local function playerAddedBackupServer(player)
+	local DataStoreService = game:GetService("DataStoreService")
+	local dataStoreKey = globalKey .. "BEASTNEWKEY" .. player.UserId
+	local orderedStore = DataStoreService:GetOrderedDataStore(dataStoreKey)
+	local dataStore = DataStoreService:GetDataStore(dataStoreKey)
+	local recentKey = orderedStore:GetSortedAsync(false, 1):GetCurrentPage()[1]
+	print("Starting Backup Check")
+	if recentKey then
+		print("Recent Data Found: ".. tostring(recentKey.value))
+		local rawData = dataStore:GetAsync(tostring(recentKey.value))
+		local backupNum = rawData["Backups"] or #backups
+		print("Most Recent Backup for Data: ".. tostring(backupNum))
+		if backupNum < #backups then
+			print("Backup Needed")
+			local backupTime = backups[backupNum + 1].ostime
+			local pages = orderedStore:GetSortedAsync(false, 10, nil, backupTime)
+			local allowedKey
+			local function recursivePages()
+				local currentPage = pages:GetCurrentPage()
+				for i,v in pairs(currentPage) do
+					if v.value < backupTime then
+						allowedKey = v.value
+						return
+					end
+				end
+				if pages.IsFinished then
+					return
+				end
+				pages:AdvanceToNextPageAsync()
+				recursivePages()
+			end
+			recursivePages()
+
+			if allowedKey then
+				print("Old Data Found, Setting: ".. allowedKey)
+				local newKey = tostring(os.time())
+				local newRawData = dataStore:GetAsync(tostring(allowedKey))
+				newRawData["Backups"] = #backups
+				dataStore:SetAsync(newKey,newRawData)
+				orderedStore:SetAsync(tonumber(newKey),tonumber(newKey))
+				coroutine.wrap(webHook.Send)(rollbackUrl, player.Name.." had their data rolled back.", "Old Key: ".. tostring(recentKey.value).. ", New Key: ".. tostring(newKey))
+			else
+				print("No Old Data Found, Resetting Data")
+				local newKey = tostring(os.time())
+				local newRawData = {}
+				newRawData["Backups"] = #backups
+				dataStore:SetAsync(newKey,newRawData)
+				orderedStore:SetAsync(tonumber(newKey),tonumber(newKey))
+				coroutine.wrap(webHook.Send)(rollbackUrl, player.Name.." had their data reset from rollback.", "Old Key: ".. tostring(recentKey.value).. ", New Key: ".. tostring(newKey))
+			end
+		end
+	end
+	coroutine.wrap(function()
+		wait(5)
+		if player then
+			game:GetService("TeleportService"):Teleport(6498421918,player)
+			wait(10)
+			if player then
+				player:Kick()
+			end
+		end
+	end)()
+end
+
+local allowedStats = {
+	["Age"] = true,
+	["Name"] = true,
+	["Clan"] = true,
+	["Hunger"] = true,
+	["Blindness"] = true,
+	["Rank"] = true,
+	["Village"] = true,
+	["SkillPoints"] = true,
+	["SpentSkillPoints"]=true,
+	["Hotbar"] = true,
+	["Element1"] = true,
+	["Element2"] = true,
+	["Rogue"] = true,
+	["HeadbandVillage"] = true,
+	["HeadbandColor"] = true,
+	["Currency"] = true
+}
+
+local function getStat(player,requestedStat,v,r)
+
+	if requestedStat == "Ally" then
+		return _G.CheckVil(r,"Allies",v)
+	end
+	if requestedStat == "War" then
+		return _G.CheckVil(r,"Warred",v)
+	end
+	if requestedStat == "Enemy" then
+		return _G.CheckVil(r,"Enemies",v)
+	end
+	if not allowedStats[requestedStat] then
+		player:Kick("exploiting..? b-baka..")
+	end
+
+	if requestedStat == "Blindness" then
+		return serverFunctions.GetBlindness(player)
+	end
+
+	local statValue = serverFunctions.GetStat(player,requestedStat)
+	if requestedStat == "Hotbar" then
+		local tblValue = {}
+		for i,v in pairs(statValue:GetChildren()) do
+			table.insert(tblValue,{["HotbarNumber"] = v.Name, ["ToolName"] = v.Value})
+		end
+		return tblValue
+	end
+
+	if requestedStat == "Element1" or requestedStat == "Element2" then
+		local known = serverFunctions.GetStat(player, requestedStat .. "Known")
+		if known.Value then
+			return statValue.Value
+		else
+			return "???"
+		end
+	end
+
+	if statValue then
+		return statValue.Value
+	end
+
+end
+
+local function playerAdded(player,forWipe)
+	if not forWipe then
+		while require(game.ServerScriptService.DataHandling.DataManager):GetData(player, "stats") do wait()
+			if player == nil or game.Players:FindFirstChild(player.Name) == nil then return end
+			require(game.ServerScriptService.DataHandling.DataManager):GetData(player, "stats"):Destroy()
+		end
+
+		wait(5)
+
+		if player == nil or game.Players:FindFirstChild(player.Name) == nil then return end
+	end
+	-- Create data folder (don't parent it yet)
+	local dataFolder = Instance.new("Folder")
+	dataFolder.Name = player.Name
+
+	-- Choose clan + get and store info of the clan
+	local clan = clanModule.chooseClan(player)
+	local clanInfo = clanModule.getClanInfo(clan)
+
+	-- Function for adding values
+	local function addValue(data)
+
+		-- Convert table values into variables
+		local valueType = data.valueType
+		local valueName = data.valueName
+		local key = data.key or data.key
+		local defaultValue = data.defaultValue
+		local beforeSave = data.beforeSave
+		local beforeInitialGet = data.beforeInitialGet
+		local onUpdate = data.onUpdate
+
+		-- Print error message and return if certain key variables are not given
+		if not valueName or not valueType or not key or defaultValue == nil then
+			local errString = "Expected<"
+			if not valueName then
+				errString = errString.. "valueName,"
+			elseif not valueType then
+				errString = errString.. "valueType,"
+			elseif not key then
+				errString = errString.. "key,"
+			elseif not defaultValue then
+				errString = errString.. "defaultValue,"
+			end
+			errString = errString:sub(1,errString:len() - 1).. ">"
+			print("[DataStore Error]:addValue:".. (valueName and valueName or "").. errString.. ":Got<nil>")
+			return
+		end
+
+		local value = Instance.new(valueType)
+		value.Name = valueName
+
+		if forWipe then
+			value.Value = defaultValue
+			value.Parent = dataFolder
+			return
+		end
+		local dontSave = false
+		local valueStore = DataStore2(key,player)
+
+		if beforeInitialGet then
+			valueStore:BeforeInitialGet(beforeInitialGet)
+		end
+
+		if onUpdate then
+			valueStore:OnUpdate(function(updatedVal)
+				dontSave = true
+				local suc,err = pcall(function()
+					updatedVal = onUpdate(updatedVal)
+					value.Value = updatedVal
+				end)
+				wait()
+				dontSave = false
+			end)
+		end
+
+		if beforeSave then
+			valueStore:BeforeSave(beforeSave)
+		end
+		value.Value = valueStore:Get(defaultValue)
+		value.Parent = dataFolder
+
+		value:GetPropertyChangedSignal("Value"):Connect(function()
+			if not dontSave then
+				valueStore:Set(value.Value)
+			end
+		end)
+
+		return value
+	end
+
+	-- Function for adding table values
+	local function addTableValue(data)
+
+		-- Convert table values into variables
+		local tableName = data.tableName
+		local key = data.key
+		local defaultItems = data.defaultItems
+		local processTbl = data.processTbl
+		local convertToSaveData = data.convertToSaveData
+		local beforeSave = data.beforeSave
+		local beforeInitialGet = data.beforeInitialGet
+		local onUpdate = data.onUpdate
+
+		-- Print error message and return if certain key variables are not given
+		if not tableName or not convertToSaveData or not processTbl or not key or not defaultItems then
+			local errString = "Expected<"
+			if not tableName then
+				errString = errString.. "tableName,"
+			elseif not convertToSaveData then
+				errString = errString.. "convertToSaveData,"
+			elseif not processTbl then
+				errString = errString.. "processTbl,"
+			elseif not key then
+				errString = errString.. "key,"
+			elseif not defaultItems then
+				errString = errString.. "defaultItems,"
+			end
+			errString = errString:sub(1,errString:len() - 1).. ">"
+			print("[DataStore Error]:addTableValue:".. errString.. ":Got<nil>")
+			return
+		end
+
+		local tblFolder = Instance.new("Folder")
+		tblFolder.Name = tableName
+
+		if forWipe then
+			for i,v in pairs(defaultItems) do
+				local newVal = processTbl(i,v)
+				newVal.Parent = tblFolder
+			end
+			tblFolder.Parent = dataFolder
+			return
+		end
+
+		local tblStore = DataStore2(key,player)
+
+		if beforeInitialGet then
+			tblStore:BeforeInitialGet(beforeInitialGet)
+		end
+
+		local tblVal = tblStore:Get(defaultItems)
+		local saving = false
+
+		local function saveData()
+			if not saving then
+				saving = true
+				local toSave = convertToSaveData(tblFolder)
+				tblStore:Set(toSave)
+				saving = false
+			else
+				repeat wait() until not saving
+				saveData()
+			end
+		end
+
+		for i,v in pairs(tblVal) do
+			local newVal = processTbl(i,v)
+			newVal.Parent = tblFolder
+			newVal.Changed:Connect(saveData)
+			for i,v in pairs(newVal:GetChildren()) do
+				v.Changed:Connect(saveData)
+			end
+		end
+
+		if beforeSave then
+			tblStore:BeforeSave(beforeSave)
+		end
+
+
+		if onUpdate then
+			tblStore:OnUpdate(function(updatedVal)
+				--[[ No support for this yet im lazy
+				saving = true
+				updatedVal = onUpdate(updatedVal)
+				value.Value = updatedVal
+				wait()
+				saving = false
+				]]
+				local suc,err = pcall(function()
+					onUpdate(updatedVal)
+				end)
+			end)
+		end
+
+		tblFolder.DescendantAdded:Connect(function(descendant)
+			saveData()
+			descendant.Changed:Connect(saveData)
+			for i,v in pairs(descendant:GetChildren()) do
+				v.Changed:Connect(saveData)
+			end
+		end)
+		tblFolder.DescendantRemoving:Connect(saveData)
+
+		tblFolder.Parent = dataFolder
+
+	end
+
+	-- Hair Color
+	local hairColor = clanInfo["HairColor"] or hairColors[math.random(1,#hairColors)]
+	hairColor = serverFunctions.ProcessValue(hairColor)
+	addValue({
+		valueType = "Color3Value",
+		valueName = "HairColor",
+		defaultValue = hairColor,
+		key = keys["HairColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end
+	})
+
+	-- Skin Color
+	local skinColor = clanInfo["SkinColor"] or Color3.fromRGB(255,255,255)
+	skinColor = serverFunctions.ProcessValue(skinColor)
+	addValue({
+		valueType = "Color3Value",
+		valueName = "SkinColor",
+		defaultValue = skinColor,
+		key = keys["SkinColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end
+	})
+
+	-- Gender
+	local gender = "Not Chosen"
+	addValue({
+		valueType = "StringValue",
+		valueName = "Gender",
+		defaultValue = gender,
+		key = keys["Gender"]
+	})
+
+	-- Name
+	local name = "Not Chosen"
+	addValue({
+		valueType = "StringValue",
+		valueName = "Name",
+		defaultValue = name,
+		key = keys["Name"],
+		onUpdate = function(newName) -- Fire client for GUI visual
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Name",newName)
+			return newName
+		end
+	})
+	
+	-- Element1
+	local element1 = serverFunctions.ProcessValue(clanInfo["Element"]) or elements[math.random(1,#elements)]
+	local elemental = addValue({
+		valueType = "StringValue",
+		valueName = "Element1",
+		defaultValue = element1,
+		key = keys["Element1"],
+		onUpdate = function(newValue) -- Fire client for GUI visual
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Element1",newValue)
+			return newValue
+		end
+	})
+
+	addValue({
+		valueType = "BoolValue",
+		valueName = "Element1Known",
+		defaultValue = false,
+		key = keys["Element1Known"],
+		onUpdate = function(newValue) -- Fire client for GUI visual
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Element1",newValue)
+			return newValue
+		end
+	})
+
+	addValue({
+		valueType = "BoolValue",
+		valueName = "Element2Known",
+		defaultValue = false,
+		key = keys["Element2Known"],
+		onUpdate = function(newValue) -- Fire client for GUI visual
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Element2",newValue)
+			return newValue
+		end
+	})
+
+	-- Element2
+	local element2 = serverFunctions.ProcessValue(clanInfo["Element2"]) or elements[math.random(1,#elements)]
+	local elemental2 = addValue({
+		valueType = "StringValue",
+		valueName = "Element2",
+		defaultValue = element2,
+		key = keys["Element2"],
+		onUpdate = function(newValue) -- Fire client for GUI visual
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Element2",newValue)
+			return newValue
+		end
+	})
+
+	if elemental2 then
+		element2 = elemental2.Value
+		
+		if element2 == elemental.Value then
+			local tries = 0
+			repeat
+				element2 = elements[math.random(1,#elements)]
+				tries = tries + 1
+			until element2 ~= elemental.Value or tries > 200
+			if element2 == elemental.Value then
+		--[[
+		local funnyUrl = "https://discord.com/api/webhooks/832783343774203905/ZEWyo_rbfIF8_tA7PaPBryIi2xUVaaSfaWsd_TFEofWKIyZ4F2-bwpIrSP6bLZZneXlC"
+			local msg = string.upper(player.Name) .. " HAS HORRIBLE LUCK LOL OVER " .. tries .. " TRIES"
+			coroutine.wrap(webHook.Send)(funnyUrl, msg, "Element Webhook")
+		else
+			local funnyUrl = "https://discord.com/api/webhooks/832783343774203905/ZEWyo_rbfIF8_tA7PaPBryIi2xUVaaSfaWsd_TFEofWKIyZ4F2-bwpIrSP6bLZZneXlC"
+			local msg1 = player.Name .. " needs an elemental change, they have dual elements."
+			local msg2 =  "New Element 2: " .. element2 .. ";      Old Element 2: " .. elemental2.Value .. ";      Old Element 1: " .. elemental.Value
+			coroutine.wrap(webHook.Send)(funnyUrl, msg1 .. msg2, "Element Webhook")
+		end
+		]]
+			end
+		end
+	end
+
+	-- Clan
+	addValue({
+		valueType = "StringValue",
+		valueName = "Clan",
+		defaultValue = clan,
+		key = keys["Clan"],
+
+		onUpdate = function(newClan)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Clan",newClan)
+			local newClanInfo = clanModule.getClanInfo(newClan)
+			if newClanInfo["HairColor"] then
+				dataFolder.HairColor.Value = serverFunctions.ProcessValue(newClanInfo["HairColor"])
+			end
+			if newClanInfo["Element"] then
+				dataFolder.Element1.Value = serverFunctions.ProcessValue(newClanInfo["Element"])
+			end
+			if newClanInfo["Element2"] then
+				dataFolder.Element2.Value = serverFunctions.ProcessValue(newClanInfo["Element2"])
+			end
+			if newClanInfo["SkinColor"] then
+				dataFolder.SkinColor.Value = serverFunctions.ProcessValue(newClanInfo["SkinColor"])
+			elseif not newClanInfo["SkinColor"] then
+				dataFolder.SkinColor.Value = Color3.fromRGB(255,255,255)
+			end
+
+			local newEyeColor = serverFunctions.ProcessValue(newClanInfo["EyeColor"]) or eyeColors[math.random(1,#eyeColors)]
+			local newEyeType = serverFunctions.ProcessValue(newClanInfo["EyeType"]) or "Normal"
+			dataFolder.LeftEyeColor.Value = newEyeColor
+			dataFolder.RightEyeColor.Value = newEyeColor
+			dataFolder.LeftEyeType.Value = newEyeType
+			dataFolder.RightEyeType.Value = newEyeType
+			dataFolder.LeftEyeOwner.Value = player.UserId -- player.Name
+			dataFolder.RightEyeOwner.Value = player.UserId
+			dataFolder.LeftEyeBlindness.Value = 0
+			dataFolder.RightEyeBlindness.Value = 0
+			--print("onupdateClan")
+			return newClan
+		end
+	})
+	
+--[[-- UniqueID
+	addValue({
+		valueType = "StringValue",
+		valueName = "Gender",
+		defaultValue = player.UserId..clan..math.random(1,999),
+		key = keys["Gender"]
+	})]]
+	
+	-- Village
+	local village = clanInfo["Village"] or villages[math.random(1,#villages)]
+	local vilVal = addValue({
+		valueType = "StringValue",
+		valueName = "Village",
+		defaultValue = village,
+		key = keys["Village"],
+		onUpdate = function(newVal)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Village",newVal)
+			if dataFolder:FindFirstChild("PaidToEco") then
+				dataFolder.PaidToEco.Value = 0
+			end
+			return newVal
+		end,
+	})
+
+	local height = RNG:NextNumber(9.1,10.9)
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Height",
+		defaultValue = height,
+		key = keys["Height"]
+	})
+
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "HeadbandVillage",
+		defaultValue = (vilVal and vilVal.Value) or village, -- So people who didnt have the stat before dont get a headband from a different village
+		key = keys["HeadbandVillage"],
+		onUpdate = function(newVal)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"HeadbandVillage",newVal)
+			return newVal
+		end,
+	})
+	
+	addValue({
+		valueType = "IntValue",
+		valueName = "HeadbandColor",
+		defaultValue = math.random(1,2), -- So people who didnt have the stat before dont get a headband from a different village
+		key = keys["HeadbandColor"],
+		
+	})
+	--local puppetWeapons = {"Katana", "Kunai"}
+	--local puppetWeapon = math.random(1,#puppetWeapons)
+	--addValue({
+	--	valueType = "StringValue",
+	----	valueName = "PuppetWeapon",
+	--	defaultValue = puppetWeapon,
+	--	key = keys["PuppetWeapon"]
+	--})
+
+	-- Currency
+	addValue({
+		valueType = "IntValue",
+		valueName = "Currency",
+		defaultValue = 0,
+		key = keys["Currency"],
+		onUpdate = function(currency) -- Fire client for GUI visual, cap money at 25000
+			local newCurrency = math.clamp(currency,0,75000)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Currency",newCurrency)
+			return newCurrency
+		end
+	})
+
+	-- Hunger
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Hunger",
+		defaultValue = 400,
+		key = keys["Hunger"],
+		onUpdate = function(currency) -- Fire client for GUI visual, cap hunger between 0 and 100
+			local newHunger = math.clamp(currency,0,100)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Hunger",newHunger)
+			return newHunger
+		end
+	})
+
+	addValue({
+		valueType = "IntValue",
+		valueName = "DateRecord",
+		defaultValue = player.AccountAge,
+		key = keys["DateRecord"],
+	})
+
+	-- Age
+	local defaultAge = math.random(8,14);
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Age",
+		defaultValue = defaultAge,
+		key = keys["Age"],
+		onUpdate = function(age) -- Fire client for GUI visual, cap age between 8 and 69
+			local newAge = age
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Age",newAge)
+			return newAge
+		end
+	})
+
+	-- Lifespan
+	addValue({
+		valueType = "IntValue",
+		valueName = "Lifespan",
+		defaultValue = 6969,
+		key = keys["Lifespan"],
+	})
+
+	-- Rank
+	addValue({
+		valueType = "IntValue",
+		valueName = "Rank",
+		defaultValue = 0,
+		key = keys["Rank"],
+	})
+
+	-- PaidToEco
+	addValue({
+		valueType = "NumberValue",
+		valueName = "PaidToEco",
+		defaultValue = 0,
+		key = keys["PaidToEco"],
+	})
+	
+	-- Playtime
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Playtime",
+		defaultValue = 7200,
+		key = keys["Playtime"],
+	})
+	
+	-- Skill Points
+	addValue({
+		valueType = "IntValue",
+		valueName = "SkillPoints",
+		defaultValue = 0,
+		key = keys["SkillPoints"],
+		onUpdate = function(points) -- make sure points dont go negative
+			local newPoints = math.max(points,0)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"SkillPoints",newPoints)
+			return newPoints
+		end
+	})
+
+	addValue({
+		valueType = "IntValue",
+		valueName = "SpentSkillPoints",
+		defaultValue = 0,
+		key = keys["SpentSkillPoints"],
+		onUpdate = function(points) -- make sure points dont go negative
+			local newPoints = math.max(points,0)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"SpentSkillPoints",newPoints)
+			return newPoints
+		end
+	})
+
+	addValue({
+		valueType = "IntValue",
+		valueName = "Notoriety",
+		defaultValue = 0,
+		key = keys["Notoriety"],
+	})
+
+	-- Title
+	addValue({
+		valueType = "StringValue",
+		valueName = "Title",
+		defaultValue = "Academy Student",
+		key = keys["Title"],
+	})
+
+	-- Made at 
+	local madeAt = tostring(tick())
+	addValue({
+		valueType = "StringValue",
+		valueName = "MadeAt",
+		defaultValue = madeAt,
+		key = keys["MadeAt"],
+	})
+
+	addValue({
+		valueType = "NumberValue",
+		valueName = "LastRankUp",
+		defaultValue = 0,
+		key = keys["LastRankUp"],
+	})
+	
+	local date = os.date("*t")
+	local tim = os.time({year=date.year, month=date.month, day=date.day, hour=0, min=0, sec=0})
+	addValue({
+		valueType = "NumberValue",
+		valueName = "LastDay",
+		defaultValue = tim,
+		key = keys["LastDay"],
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "LastJinComplement",
+		defaultValue = 0,
+		key = keys["LastJinComplement"],
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "LastJinInsult",
+		defaultValue = 0,
+		key = keys["LastJinInsult"],
+	})
+
+	--experience
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Experience",
+		defaultValue = 0,
+		key = keys["Experience"],
+		onUpdate = function(exp)
+			local niceExp = math.min(exp, 3100)
+			return niceExp
+		end,
+	})
+
+	--handsign boost
+	addValue({
+		valueType = "NumberValue",
+		valueName = "HandsignExperience",
+		defaultValue = 0,
+		key = keys["HandsignExperience"],
+		onUpdate = function(points) -- make sure points dont go negative
+			local newPoints = math.min(points, 4000)
+			--game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"SpentSkillPoints",newPoints)
+			return newPoints
+		end
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "TrainingThing",
+		defaultValue = "",
+		key = keys["TrainingThing"],
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "CopiedJutsu",
+		defaultValue = "",
+		key = keys["CopiedJutsu"]
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "Associates",
+		defaultValue = "[]",
+		key = keys["Associates"],
+		onUpdate = function(valu)
+			local value = valu
+			if valu == "" or valu == " " then
+				value = "[]"
+			end
+			return value
+		end,
+	})
+
+	local isMain = math.random(1,1000)
+	addValue({
+		valueType = "IntValue",
+		valueName = "ClanType",
+		defaultValue = isMain,
+		key = keys["ClanType"],
+	})
+
+	addValue({
+		valueType = "IntValue",
+		valueName = "MissionExperience",
+		defaultValue = 1,
+		key = keys["MissionExperience"],
+	})
+
+	--jin
+	addValue({
+		valueType = "IntValue",
+		valueName = "Jin",
+		defaultValue = -1,
+		key = keys["Jin"],
+	})
+
+	--jin exp
+	addValue({
+		valueType = "NumberValue",
+		valueName = "JinEXP",
+		defaultValue = 0,
+		key = keys["JinEXP"],
+	})
+	
+	addValue({
+		valueType = "StringValue",
+		valueName = "JinSealType",
+		defaultValue = "",
+		key = keys["JinSealType"],
+	})
+
+
+	--jin beserk 
+	addValue({
+		valueType = "NumberValue",
+		valueName = "LastBerserk",
+		defaultValue = madeAt,
+		key = keys["LastBerserk"],
+	})
+
+	addValue({
+		valueType = "NumberValue",
+		valueName = "SoHChakra",
+		defaultValue = 0,
+		key = keys["SoHChakra"],
+	})
+	
+	addValue({
+		valueType = "NumberValue",
+		valueName = "GourdChakra",
+		defaultValue = 0,
+		key = keys["GourdChakra"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "SenjuSP",
+		defaultValue = false,
+		key = keys["SenjuSP"],
+	})
+
+	addValue({
+		valueType = "NumberValue",
+		valueName = "CM2Chakra",
+		defaultValue = 0,
+		key = keys["CM2Chakra"],
+	})
+
+	addValue({
+		valueType = "NumberValue",
+		valueName = "MangekyoEXP",
+		defaultValue = 0,
+		key = keys["MangekyoEXP"],
+	})
+	addValue({
+		valueType = "NumberValue",
+		valueName = "GatesEXP",
+		defaultValue = 0,
+		key = keys["GatesEXP"]
+	})
+	
+	-- Skills
+	addTableValue({
+		tableName = "Skills",
+		defaultItems = {{SkillName = "Substitution"}},
+		key = keys["Skills"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("Folder")
+			newValue.Name = Value.SkillName
+			
+			local isStolen = Instance.new("BoolValue")
+			isStolen.Name = "BodyLinked"
+			isStolen.Value = Value.BodyLinked or false
+			isStolen.Parent = newValue
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				newSkill.SkillName = v.Name
+				newSkill.BodyLinked = v:FindFirstChild("BodyLinked") and v.BodyLinked.Value
+
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+	
+	--[[addTableValue({
+		tableName = "StolenBodyStorage",
+		defaultItems = {},
+		key = keys["StolenBodyStorage"],
+		processTbl = function(index,Value)		
+			local newValue = Instance.new("Folder")
+			newValue.Name = Value.BodyId
+
+			for i, v in next, Value do
+				local value;
+				if typeof(v) == "number" then
+					if v % 1 == 0 then
+						value = Instance.new("IntValue")
+					else
+						value = Instance.new("NumberValue")
+					end
+					value.Value = v 
+				elseif typeof(v) == "string" then
+					value = Instance.new("StringValue")
+					value.Value = v 
+				elseif typeof(v) == "Color3" then
+					value = Instance.new("Color3Value")
+					value.Value = v 
+				elseif typeof(v) == "table" then
+					if string.lower(i):match("color") then
+						value = Instance.new("Color3Value")
+						value.Value = Color3.new(v[1], v[2], v[3])
+					elseif i == "Skills" then
+						value = Instance.new("Folder")
+						for _, b in next, v do
+							local newValue = Instance.new("Folder")
+							newValue.Name = b
+
+							local isStolen = Instance.new("BoolValue")
+							isStolen.Name = "BodyLinked"
+							isStolen.Value = true
+							isStolen.Parent = newValue
+							
+							newValue.Parent = value
+						end
+					else
+						value = Instance.new("Folder")
+					end
+				end
+				
+				value.Name = i 
+				value.Parent = newValue
+			end
+			
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for _, folder in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				for _, value in next, folder:GetChildren() do
+					if value:IsA("Color3Value") then
+						newSkill[value.Name] = {value.Value.r, value.Value.g, value.Value.b}
+					elseif value:IsA("Folder") then
+						local tbl = {}
+						for _, v in next, value:GetChildren() do
+							table.insert(tbl, v.Name)
+						end
+						newSkill[value.Name] = tbl
+					else
+						newSkill[value.Name] = value.Value
+					end
+				end
+				
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})]]
+	
+	--eye skills
+	addTableValue({
+		tableName = "LeftEyeSkills",
+		defaultItems = {},
+		key = keys["LeftEyeSkills"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("Folder")
+			newValue.Name = Value.SkillName
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				newSkill.SkillName = v.Name
+
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+
+	addTableValue({
+		tableName = "RightEyeSkills",
+		defaultItems = {},
+		key = keys["RightEyeSkills"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("Folder")
+			newValue.Name = Value.SkillName
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				newSkill.SkillName = v.Name
+
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+
+
+
+	-- Skills
+	addTableValue({
+		tableName = "FTGTags",
+		defaultItems = {},
+		key = keys["FTGTags"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("Folder")
+			newValue.Name = "Tag"
+
+			local cframeVal = Instance.new("Vector3Value")
+			cframeVal.Name = "Position"
+			cframeVal.Value = Vector3.new(Value.Position[1],Value.Position[2],Value.Position[3])
+			cframeVal.Parent = newValue
+
+			local nameVal = Instance.new("StringValue")
+			nameVal.Name = "TagName"
+			nameVal.Value = Value.TagName or ""
+			nameVal.Parent = newValue
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				newSkill.Position = {v.Position.Value.X,v.Position.Value.Y,v.Position.Value.Z}
+				newSkill.TagName = v.TagName.Value
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+
+
+	-- Eye Color
+	local eyeColor = serverFunctions.ProcessValue(clanInfo["EyeColor"]) or eyeColors[math.random(1,#eyeColors)]
+	local eyeType = serverFunctions.ProcessValue(clanInfo["EyeType"]) or "Normal"
+
+	-- Left Eye Color
+	addValue({
+		valueType = "Color3Value",
+		valueName = "LeftEyeColor",
+		defaultValue = eyeColor,
+		key = keys["LeftEyeColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end,
+	})
+
+	-- Right Eye Color
+	addValue({
+		valueType = "Color3Value",
+		valueName = "RightEyeColor",
+		defaultValue = eyeColor,
+		key = keys["RightEyeColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end,
+	})
+
+	-- Left Eye Blindness
+	addValue({
+		valueType = "NumberValue",
+		valueName = "LeftEyeBlindness",
+		defaultValue = 0,
+		key = keys["LeftEyeBlindness"],
+		onUpdate = function(newValue)
+			pcall(function()
+				game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Blindness",serverFunctions.GetBlindness(player))
+			end)
+			return newValue
+		end
+	})
+
+	-- Right Eye Blindness
+	addValue({
+		valueType = "NumberValue",
+		valueName = "RightEyeBlindness",
+		defaultValue = 0,
+		key = keys["RightEyeBlindness"],
+		onUpdate = function(newValue)
+			pcall(function()
+				game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Blindness",serverFunctions.GetBlindness(player))
+			end)
+			return newValue
+		end
+	})
+
+	-- Left Eye Type
+	addValue({
+		valueType = "StringValue",
+		valueName = "LeftEyeType",
+		defaultValue = eyeType,
+		key = keys["LeftEyeType"],
+		onUpdate = function(newValue)
+			pcall(function()
+				game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Blindness",serverFunctions.GetBlindness(player))
+			end)
+			return newValue
+		end
+	})
+
+	-- Right Eye Type
+	addValue({
+		valueType = "StringValue",
+		valueName = "RightEyeType",
+		defaultValue = eyeType,
+		key = keys["RightEyeType"],
+		onUpdate = function(newValue)
+			pcall(function()
+				game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Blindness",serverFunctions.GetBlindness(player))
+			end)
+			return newValue
+		end
+	})
+
+	-- Left Eye Owner
+	local leftEyeOwner = addValue({
+		valueType = "IntValue",
+		valueName = "LeftEyeOwner",
+		defaultValue = player.Name,
+		key = keys["LeftEyeOwner"],
+	})
+
+	-- Right Eye Owner
+	local rightEyeOwner = addValue({
+		valueType = "IntValue",
+		valueName = "RightEyeOwner",
+		defaultValue = player.Name,
+		key = keys["RightEyeOwner"],
+	})
+	
+	if leftEyeOwner and leftEyeOwner.Value == 0 then
+		dataFolder.LeftEyeOwner.Value = player.UserId
+	end
+	if rightEyeOwner and rightEyeOwner.Value == 0 then
+		dataFolder.RightEyeOwner.Value = player.UserId
+	end
+
+	local defaultHotbar = {}
+	for i=0,10 do
+		table.insert(defaultHotbar,{["HotbarNumber"] = tostring(i), ["ToolName"] = ""})
+	end
+	-- Hotbar
+	addTableValue({
+		tableName = "Hotbar",
+		defaultItems = defaultHotbar,
+		key = keys["Hotbar"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("StringValue")
+			newValue.Name = Value.HotbarNumber
+			newValue.Value = Value.ToolName
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newValue = {}
+				newValue.HotbarNumber = v.Name
+				newValue.ToolName = v.Value
+
+				table.insert(toSave,newValue)
+			end
+
+			return toSave
+		end,
+		onUpdate = function(newValue)
+			game.ReplicatedStorage.Remotes.StatChanged:FireClient(player,"Hotbar",newValue)
+			return newValue
+		end
+	})
+
+	-- Global Cooldowns
+	addTableValue({
+		tableName = "Cooldowns",
+		defaultItems = {},
+		key = keys["Cooldowns"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("NumberValue")
+			newValue.Name = Value.MoveName
+			newValue.Value = Value.Tick
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newValue = {}
+				newValue.MoveName = v.Name
+				newValue.Tick = v.Value
+
+				table.insert(toSave,newValue)
+			end
+
+			return toSave
+		end,
+	})
+
+	-- Hair
+	addValue({
+		valueType = "StringValue",
+		valueName = "Hair",
+		defaultValue = "",
+		key = keys["Hair"],
+	})
+
+	-- Facial Marking
+	addValue({
+		valueType = "IntValue",
+		valueName = "FacialMarking",
+		defaultValue = math.random(1,250),
+		key = keys["FacialMarking"],
+	})
+
+	-- Era
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Era",
+		defaultValue = 1,
+		key = keys["Era"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "OptionalWipe",
+		defaultValue = false,
+		key = keys["OptionalWipe"],
+	})
+
+	-- Morph
+	addValue({
+		valueType = "StringValue",
+		valueName = "Morph",
+		defaultValue = "",
+		key = keys["Morph"],
+	})
+
+	-- Headband
+	addValue({
+		valueType = "StringValue",
+		valueName = "Headband",
+		defaultValue = "Forehead",
+		key = keys["Headband"],
+	})
+
+	-- Anbu
+	addValue({
+		valueType = "BoolValue",
+		valueName = "Anbu",
+		defaultValue = false,
+		key = keys["Anbu"],
+	})
+
+	-- Morph Enabled
+	addValue({
+		valueType = "BoolValue",
+		valueName = "MorphEnabled",
+		defaultValue = true,
+		key = keys["MorphEnabled"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "WasInSound",
+		defaultValue = false,
+		key = keys["WasInSound"],
+	})
+	
+	addValue({
+		valueType = "IntValue",
+		valueName = "FlakGrips",
+		defaultValue = 0,
+		key = keys["FlakGrips"],
+	})
+
+
+--[[-- InKamui
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InKamui",
+		defaultValue = false,
+		key = keys["InKamui"],
+	})]]
+
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InSharkStomach",
+		defaultValue = false,
+		key = keys["InSharkStomach"],
+	})
+
+	local facialMarkingColor = Color3.fromRGB(math.random(1,255),math.random(1,255),math.random(1,255))
+	-- Facial Marking Color
+	addValue({
+		valueType = "Color3Value",
+		valueName = "FacialMarkingColor",
+		defaultValue = facialMarkingColor,
+		key = keys["FacialMarkingColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end,
+	})
+
+	local squadMarkerColor = Color3.fromRGB(math.random(1,255),math.random(1,255),math.random(1,255))
+	-- Squad Marker Color
+	addValue({
+		valueType = "Color3Value",
+		valueName = "SquadMarkerColor",
+		defaultValue = squadMarkerColor,
+		key = keys["SquadMarkerColor"],
+		beforeSave = function(unSerialized)
+			local serialized = {}
+			serialized[1] = unSerialized.r
+			serialized[2] = unSerialized.g
+			serialized[3] = unSerialized.b
+
+			return serialized
+		end,
+		beforeInitialGet = function(serialized)
+			local unSerialized = Color3.new(serialized[1],serialized[2],serialized[3])
+
+			return unSerialized
+		end,
+	})
+
+	-- SenjutsuChakra
+	addValue({
+		valueType = "NumberValue",
+		valueName = "SenjutsuChakra",
+		defaultValue = 0,
+		key = keys["SenjutsuChakra"],
+	})
+
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InCombat",
+		defaultValue = false,
+		key = keys["InCombat"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "Hunted",
+		defaultValue = false,
+		key = keys["Hunted"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InBeserk",
+		defaultValue = false,
+		key = keys["InBeserk"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InStage2",
+		defaultValue = false,
+		key = keys["InStage2"],
+	})
+
+	addValue({
+		valueType = "StringValue",
+		valueName = "EquippedBody",
+		defaultValue = "",
+		key = keys["EquippedBody"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "InChuninExams",
+		defaultValue = false,
+		key = keys["InChuninExams"],
+	})
+
+	addValue({
+		valueType = "BoolValue",
+		valueName = "ParticipatedInPrelims",
+		defaultValue = false,
+		key = keys["ParticipatedInPrelims"],
+	})
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "EXPRestore1",
+		defaultValue = false,
+		key = keys["EXPRestore1"],
+	})
+
+	
+	addValue({
+		valueType = "BoolValue",
+		valueName = "ParticipatedInJouninExams",
+		defaultValue = false,
+		key = keys["ParticipatedInJouninExams"],
+	})
+
+	-- Shirt Override
+	addValue({
+		valueType = "StringValue",
+		valueName = "Shirt",
+		defaultValue = "",
+		key = keys["Shirt"],
+	})
+
+	-- Pants Override
+	addValue({
+		valueType = "StringValue",
+		valueName = "Pants",
+		defaultValue = "",
+		key = keys["Pants"],
+	})
+
+	local latestHp = Instance.new("NumberValue")
+	latestHp.Name = "LastHealth"
+	latestHp.Parent = dataFolder
+	latestHp.Value = 9999999
+
+	-- Health Saving
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Health",
+		defaultValue = 9999999,
+		key = keys["Health"],
+		beforeSave = function(valBefore)
+			if latestHp then
+				return latestHp.Value
+			else
+				print("LATEST HP VAL NOT FOUND")
+				return valBefore
+			end
+		end
+	})
+
+	local latestChakra = Instance.new("NumberValue")
+	latestChakra.Name = "LastChakra"
+	latestChakra.Parent = dataFolder
+	latestChakra.Value = 9999999
+
+	-- Chakra Saving
+	addValue({
+		valueType = "NumberValue",
+		valueName = "Chakra",
+		defaultValue = 9999999,
+		key = keys["Chakra"],
+		beforeSave = function(valBefore)
+			if latestChakra then
+				return latestChakra.Value
+			else
+				print("LATEST CHAKRA VAL NOT FOUND")
+				return valBefore
+			end
+		end
+	})
+
+	local latestCF = Instance.new("CFrameValue")
+	latestCF.Name = "LastCF"
+	latestCF.Parent = dataFolder
+	latestCF.Value = CFrame.new()
+
+	-- Position Saving
+	addValue({
+		valueType = "CFrameValue",
+		valueName = "PlayerCF",
+		defaultValue = CFrame.new(),
+		key = keys["PlayerCF"],
+		beforeSave = function(unSerialized)
+			local toSerialize
+			if latestCF then
+				toSerialize = latestCF.Value
+			else
+				print("LATEST CF VAL NOT FOUND")
+				toSerialize = unSerialized
+			end
+			return {toSerialize:components()}
+		end,
+		beforeInitialGet = function(serialized)
+			return CFrame.new(unpack(serialized))
+		end,
+	})
+
+	--KamuiCD
+	addValue({
+		valueType = "CFrameValue",
+		valueName = "KamuiCF",
+		defaultValue = CFrame.new(),
+		key = keys["KamuiCF"],
+		beforeSave = function(unSerialized)
+			local toSerialize
+			if latestCF then
+				toSerialize = latestCF.Value
+			else
+				print("LATEST CF VAL NOT FOUND")
+				toSerialize = unSerialized
+			end
+			return {toSerialize:components()}
+		end,
+		beforeInitialGet = function(serialized)
+			return CFrame.new(unpack(serialized))
+		end,
+	})
+
+	addValue({
+		valueType = "CFrameValue",
+		valueName = "SharkCF",
+		defaultValue = CFrame.new(),
+		key = keys["SharkCF"],
+		beforeSave = function(unSerialized)
+			local toSerialize
+			if latestCF then
+				toSerialize = latestCF.Value
+			else
+				print("LATEST CF VAL NOT FOUND")
+				toSerialize = unSerialized
+			end
+			return {toSerialize:components()}
+		end,
+		beforeInitialGet = function(serialized)
+			return CFrame.new(unpack(serialized))
+		end,
+	})
+
+
+	local function convertPathDataToFolder(Value)
+		local newValue = Instance.new("Folder")
+		newValue.Name = Value.PathType
+
+		local userId = Instance.new("IntValue")
+		userId.Name = "UserId"
+		userId.Value = Value.UserId
+		userId.Parent = newValue
+
+		local title = Instance.new("StringValue")
+		title.Name = "Title"
+		title.Value = Value.Title
+		title.Parent = newValue
+
+		local clan = Instance.new("StringValue")
+		clan.Name = "Clan"
+		clan.Value = Value.Clan
+		clan.Parent = newValue
+
+		local name = Instance.new("StringValue")
+		name.Name = "Gender"
+		name.Value = Value.Gender
+		name.Parent = newValue
+
+		local madeAt = Instance.new("StringValue")
+		madeAt.Name = "MadeAt"
+		madeAt.Value = Value.MadeAt
+		madeAt.Parent = newValue
+
+		local val = Instance.new("IntValue")
+		val.Name = "FamilyID"
+		val.Value = Value.FamilyID
+		val.Parent = newValue
+
+		local valy = Instance.new("NumberValue")
+		valy.Name = "Height"
+		valy.Value = Value.Height
+		valy.Parent = newValue
+
+		local valy = Instance.new("StringValue")
+		valy.Name = "Hair"
+		valy.Value = Value.Hair
+		valy.Parent = newValue
+
+		local valy = Instance.new("StringValue") --which path this is
+		valy.Name = "PathType"
+		valy.Value = Value.PathType
+		valy.Parent = newValue
+
+		return newValue
+	end
+	addTableValue({
+		tableName = "PathsData",
+		defaultItems = {},
+		key = keys["PathsData"],
+		processTbl = function(index,Value)
+			local newValue = convertPathDataToFolder(Value)
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,member in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				for i,value in next, member:GetChildren() do
+					newSkill[value.Name] = value.Value
+				end
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+	
+	
+	--family id
+	addValue({
+		valueType = "IntValue",
+		valueName = "FamilyID",
+		defaultValue =  math.random(1,3), --math.random(0,5),
+		key = keys["FamilyID"]
+	})
+
+	local function convertFamilyToFolder(Value)
+		Value = Value or {}
+		local newValue = Instance.new("Folder")
+		newValue.Name = Value.UserId or 0
+
+		local userId = Instance.new("IntValue")
+		userId.Name = "UserId"
+		userId.Value = Value.UserId or 0
+		userId.Parent = newValue
+
+		local title = Instance.new("StringValue")
+		title.Name = "Title"
+		title.Value = Value.Title or ""
+		title.Parent = newValue
+
+		local clan = Instance.new("StringValue")
+		clan.Name = "Clan"
+		clan.Value = Value.Clan or ""
+		clan.Parent = newValue
+
+		local name = Instance.new("StringValue")
+		name.Name = "Gender"
+		name.Value = Value.Gender or ""
+		name.Parent = newValue
+
+		local madeAt = Instance.new("StringValue")
+		madeAt.Name = "MadeAt"
+		madeAt.Value = Value.MadeAt or "[]"
+		madeAt.Parent = newValue
+
+		local val = Instance.new("IntValue")
+		val.Name = "FamilyID"
+		val.Value = Value.FamilyID or 0
+		val.Parent = newValue
+
+		return newValue
+	end
+
+	addTableValue({
+		tableName = "FamilyData",
+		defaultItems = {},
+		key = keys["FamilyData"],
+		processTbl = function(index,Value)
+			local newValue = convertFamilyToFolder(Value or {})
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,member in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				for i,value in next, member:GetChildren() do
+					newSkill[value.Name] = value.Value
+				end
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+
+	local firstLoadTag = Instance.new("BoolValue")
+	firstLoadTag.Name = "FirstHPLoad"
+	firstLoadTag.Parent = dataFolder
+
+	local ftgLoadTag = Instance.new("BoolValue")
+	ftgLoadTag.Name = "FTGLoad"
+	ftgLoadTag.Parent = player
+	game.Debris:AddItem(ftgLoadTag, 15)
+
+	-- Inventory
+	addTableValue({
+		tableName = "Inventory",
+		defaultItems = {},
+		key = keys["Inventory"],
+		processTbl = function(index,Value)
+			local newValue = Instance.new("Folder")
+			newValue.Name = Value.SkillName
+			if Value.Values then
+				for i,v in pairs(Value.Values) do
+					local exValue = Instance.new(v.ValClass)
+					exValue.Name = v.ValName
+					exValue.Value = v.ValValue
+					exValue.Parent = newValue
+				end
+			end
+
+
+			return newValue
+		end,
+		convertToSaveData = function(tblFolder)
+			local toSave = {}
+
+			for i,v in pairs(tblFolder:GetChildren()) do
+				local newSkill = {}
+				newSkill.SkillName = v.Name
+
+				newSkill.Values = {}
+				for i,v in pairs(v:GetChildren()) do
+					if v:IsA("StringValue") or v:IsA("NumberValue") or v:IsA("IntValue") or v:IsA("BoolValue") then
+						local newTbl = {}
+						newTbl.ValClass = v.ClassName
+						newTbl.ValName = v.Name
+						newTbl.ValValue = v.Value
+						table.insert(newSkill.Values,newTbl)
+					end
+				end
+
+				table.insert(toSave,newSkill)
+			end
+
+			return toSave
+		end
+	})
+
+	-- BACKUPS (DONT EDIT THIS OMGG)
+	local backupVal = addValue({
+		valueType = "IntValue",
+		valueName = "Backups",
+		defaultValue = #backups,
+		key = "Backups",
+	})
+	
+	local getStatRemote = Instance.new("RemoteFunction")
+	getStatRemote.Name = "GetStat"
+	getStatRemote.OnServerInvoke = getStat
+	getStatRemote.Parent = player
+
+	if not forWipe and backupVal.Value < #backups then
+		game:GetService("TeleportService"):Teleport(6532801361,player)
+		if player.Character then
+			player.Character:Destroy()
+		end
+		coroutine.wrap(function()
+			wait(10)
+			if player then
+				player:Kick("Rejoin")
+			end
+		end)()
+	end
+
+	-- Parent the data folder (this shows others scripts that the player has loaded
+	if forWipe then
+		dataFolder.Parent = game.ServerStorage.BIN
+		_G.AddItem(dataFolder,60) -- thats probably enough time to read it... right?
+		return dataFolder
+	else
+		dataFolder.Parent = game.ServerStorage.PlayerData
+		
+		local didWipe = false
+		local inExams = dataFolder.InChuninExams.Value
+		
+		if dataFolder.Hunted.Value == true then -- rip bozo
+			print("hunt logged?")
+			local wipeModule = require(game.ServerScriptService.Services.WIPE)
+			wipeModule.Wipe(player, true)
+		end
+		
+		--if dataFolder.EXPRestore1.Value == false then
+		--	dataFolder.EXPRestore1.Value = true
+		--	print("Restored")
+		--	dataFolder.Experience.Value = dataFolder.Experience.Value + 100
+		--	dataFolder.Currency.Value = dataFolder.Currency.Value + 100
+		--end
+		
+		if dataFolder.InCombat.Value == true then
+			print("combat logged?")
+			if dataFolder.Skills:FindFirstChild("Gourd") then
+				dataFolder.Skills.Gourd:Destroy()
+				if dataFolder.Skills:FindFirstChild("Refill Sand") then
+					dataFolder.Skills["Refill Sand"]:Destroy()
+				end
+			end
+			
+			local wipe = 0
+			local rng = math.random(1,5)
+			local waragainst = nil
+			for i,v in pairs(game:GetService("HttpService"):JSONDecode(game.ReplicatedStorage.EconomyInfo.Villages[dataFolder.Village.Value].Warred.Value)) do
+				if i then
+					waragainst = i
+					wipe = 1
+				end
+			end
+
+			if inExams then
+				rng = math.random(1,5)
+				wipe = 1
+			end
+			
+			if dataFolder.Inventory:FindFirstChild("Flak") then
+				dataFolder.Inventory.Flak:Destroy()
+			end
+			dataFolder.Currency.Value = dataFolder.Currency.Value/2
+			dataFolder.Experience.Value = math.clamp(dataFolder.Experience.Value - 100, 0, 10000)
+			dataFolder.Notoriety.Value = 0
+			dataFolder.FlakGrips.Value = 0
+			dataFolder.Playtime.Value = math.max(0, dataFolder.Playtime.Value - 1800)
+			coroutine.wrap(webHook.Send)(logurl, player.Name.." has combat logged.", "Money: "..dataFolder.Currency.Value.." Experience: "..dataFolder.Experience.Value)
+			local Stats = dataFolder
+			Stats.InCombat.Value = false
+			for a, b in pairs(Stats.Skills:GetChildren()) do
+				if string.find(b.Name, "Pouch") then
+					b:Destroy()
+				end
+			end
+			if Stats.Skills:FindFirstChild("F1ying Thunder God") then
+				for i,v in pairs(Stats.FTGTags:GetChildren()) do
+					v:Destroy()
+				end
+			end
+			
+		
+		
+			local x 
+			if Stats.Title.Value == "Chunin" then
+				x = 2
+			elseif Stats.Title.Value == "Special Jounin" then
+				x = 3
+			elseif Stats.Title.Value == "Jounin" then
+				x = 4
+			elseif Stats.Title.Value == "Advisor" then
+				x = 5
+			elseif  string.find(Stats.Title.Value, "kage") then
+				x = 999
+			else
+				x = 0
+			end
+			local items
+			for i,v in pairs(Stats.Inventory:GetChildren()) do
+			 
+				if Stats.FlakGrips.Value <= x then
+					items = v.Name == "Flak" or v.Name == "Katana" and Stats.Skills:FindFirstChild("Iron Grip")
+				else
+					items =	v.Name == "Katana" and Stats.Skills:FindFirstChild("Iron Grip")
+				end
+				local removeItem = true
+				if items then
+					removeItem = false				
+				end			
+					
+				
+				if removeItem then
+					v:Destroy()
+				end
+			end
+			
+			if dataFolder.Jin.Value ~= 1 then
+				dataFolder.JinEXP.Value = math.max(dataFolder.JinEXP.Value - 50, 0)
+			end
+			
+			if not inExams then
+				local clanSpawn = workspace.ClanSpawn:FindFirstChild(Stats.Clan.Value) or workspace.ClanSpawn:FindFirstChild("Test")
+				if Stats.Village.Value == "Rogue" then
+					clanSpawn = game.Workspace.ClanSpawn["Rogue"..math.random(1,9)]
+				elseif Stats.Village.Value == "Sound" then
+					clanSpawn = game.Workspace.ClanSpawn["Sound"..math.random(1,2)]
+				elseif game.ServerScriptService.DataStore.Handler.ClanInfo:FindFirstChild(Stats.Village.Value) and not game.ServerScriptService.DataStore.Handler.ClanInfo[Stats.Village.Value]:FindFirstChild(Stats.Clan.Value) then
+					clanSpawn = game.Workspace.ClanSpawn[Stats.Village.Value]
+				end
+				Stats.PlayerCF.Value = clanSpawn.CFrame
+				if player.Character then
+					player.Character:MoveTo(clanSpawn.Position)
+				end
+			end
+			if wipe == 1 and rng == 1 and (Stats.Title.Value ~= "Academy Student" or inExams) then
+				didWipe = true
+				if waragainst and Stats.Title.Value:match("kage") then
+					_G.AddWarXP(waragainst,Stats.Village.Value,9500)
+				end
+				local wipeModule = require(game.ServerScriptService.Services.WIPE)
+				wipeModule.Wipe(player, true)
+			end	
+		end
+		dataFolder.InChuninExams.Value = false
+		
+		if didWipe == false and dataFolder.InBeserk.Value == true then
+			dataFolder.JinEXP.Value = math.max(dataFolder.JinEXP.Value - 75, 0)
+		end
+		
+		if didWipe == false and dataFolder.InStage2.Value == true then
+			didWipe = true
+			local wipeModule = require(game.ServerScriptService.Services.WIPE)
+			wipeModule.Wipe(player, true)
+			
+			coroutine.wrap(webHook.Send)(logurl, player.Name.." has combat logged and got wiped because they were berserked.", "Money: "..dataFolder.Currency.Value.." Experience: "..dataFolder.Experience.Value)
+		end
+
+		dataFolder.InBeserk.Value = false
+		dataFolder.InStage2.Value = false
+	end
+end
+
+script.GetNewData.OnInvoke = function(player)
+	return playerAdded(player,true)
+end
+
+-- Hook function to player added
+game.Players.PlayerAdded:Connect(function(v)
+	if game.ServerStorage:FindFirstChild("BackupServer") then
+		playerAddedBackupServer(v)
+	else
+		playerAdded(v)
+	end
+	
+	
+end)
+
+-- Use function on players who were in game before the PlayerAdded function was hooked
+for i,v in pairs(game.Players:GetPlayers()) do
+	if game.ServerStorage:FindFirstChild("BackupServer") then
+		playerAddedBackupServer(v)
+	else
+		playerAdded(v)
+	end
+end
+
+local removeCombat = false
+if not game:GetService("RunService"):IsStudio() then
+	game:BindToClose(function()
+		removeCombat = true
+		local sounds = script.ShutdownSounds:GetChildren()
+		local sound = sounds[math.random(1,#sounds)]:Clone()
+		sound.Parent = workspace
+		sound:Play()
+		
+		
+		wait(7.5)
+	end)
+end
+-- Remove DataFolder on PlayerRemoving
+game.Players.PlayerRemoving:Connect(function(player)
+	local dataFolder = require(game.ServerScriptService.DataHandling.DataManager):GetData(player, "stats")
+	game.Debris:AddItem(dataFolder, 2)
+	--dataFolder.Health.Value = dataFolder.LastHealth.Value
+	wait(2)
+	for _,v in next, workspace.Alive:GetChildren() do
+		if v.Name == player.Name then
+			v:Destroy()
+		end
+	end
+
+	for _,v in next, workspace:GetChildren() do
+		if v.Name == player.Name and v:FindFirstChild("Humanoid") then
+			v:Destroy()
+		end
+	end
+	if removeCombat then
+		dataFolder.InCombat.Value = false
+	end
+	if dataFolder then
+		dataFolder:Destroy()
+	end
+end)
+
+game.ReplicatedStorage.Remotes.GetStat.OnServerInvoke = function(player,requestedStat,v,r)
+
+	if requestedStat == "Ally" then
+		return _G.CheckVil(r,"Allies",v)
+	end
+	if requestedStat == "War" then
+		return _G.CheckVil(r,"Warred",v)
+	end
+	if requestedStat == "Enemy" then
+		return _G.CheckVil(r,"Enemies",v)
+	end
+	if not allowedStats[requestedStat] then
+		player:Kick("exploiting..? b-baka..")
+	end
+
+	if requestedStat == "Blindness" then
+		return serverFunctions.GetBlindness(player)
+	end
+
+	local statValue = serverFunctions.GetStat(player,requestedStat)
+	if requestedStat == "Hotbar" then
+		local tblValue = {}
+		for i,v in pairs(statValue:GetChildren()) do
+			table.insert(tblValue,{["HotbarNumber"] = v.Name, ["ToolName"] = v.Value})
+		end
+		return tblValue
+	end
+
+	if requestedStat == "Element1" or requestedStat == "Element2" then
+		local known = serverFunctions.GetStat(player, requestedStat .. "Known")
+		if known.Value then
+			return statValue.Value
+		else
+			return "???"
+		end
+	end
+
+	if statValue then
+		return statValue.Value
+	end
+
+end
+
+script.GetRawDataOffline.OnInvoke = function(userid)
+	local DataStoreService = game:GetService("DataStoreService")
+	local dataStoreKey = globalKey .. "/" .. userid
+	local orderedStore = DataStoreService:GetOrderedDataStore(dataStoreKey)
+	local dataStore = DataStoreService:GetDataStore(dataStoreKey)
+	local recentKey = orderedStore:GetSortedAsync(false, 1):GetCurrentPage()[1]
+	
+	if recentKey then
+		local rawData = dataStore:GetAsync(tostring(recentKey.value))
+		local dataKeysToNames = {}
+		for i,v in pairs(keys) do
+			dataKeysToNames[i] = rawData[v]
+		end
+		return dataKeysToNames
+	end
+end
